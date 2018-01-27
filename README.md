@@ -16,7 +16,7 @@ Run `./deploy.sh`.
 
 ## Dependencies
 
-Docker, sudo, sakura (terminal for --no-interaction), X, alsa for sound(?).
+Docker, sudo, sakura (terminal for --no-interaction), X.
 
 Customize to your needs.
 
