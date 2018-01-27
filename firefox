@@ -1,0 +1,37 @@
+#!/bin/bash
+
+WORKDIR="/root/docker/firefox"
+
+if [ `id -u` != 0 ]; then
+  if [ -t 0 ]; then
+    exec sudo `realpath $0` "$@"
+  else
+    exec sakura -e sudo `realpath $0` --no-interaction "$@"
+  fi
+fi
+
+set -e
+
+if echo -- "$@" | grep -q " --build"; then
+  cd $WORKDIR
+  docker pull debian
+  docker build --pull=true -t firefox .
+fi
+
+if echo -- "$@" | grep -q " --no-interaction"; then
+  setsid `realpath $0` "$(echo " " "$@" | sed 's/--no-interaction//')" >/dev/null </dev/null 2>/dev/null &
+  sleep 1.5
+  exit 0
+fi
+
+TMP_XAUTH=`mktemp`
+xauth nlist :0 | sed -e 's/^..../ffff/' | xauth -f $TMP_XAUTH nmerge -
+chown -R $SUDO_UID:$SUDO_GID $TMP_XAUTH
+mkdir -p /tmp/firefox || true
+chown -R $SUDO_UID:$SUDO_UID /tmp/firefox
+docker run --cap-drop=all --rm --shm-size 2g -e DISPLAY=$DISPLAY \
+    -v /tmp/firefox:/home/user/Downloads/ \
+    -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+    -v $TMP_XAUTH:/home/user/.Xauthority:ro \
+    firefox
+rm -rf $TMP_XAUTH
