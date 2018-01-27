@@ -1,4 +1,4 @@
-# Dockerized Firefox with Adobe Flash
+# Dockerized Firefox
 
 ## Why?
 
