@@ -3,11 +3,11 @@
 WORKDIR="/root/docker/firefox"
 
 if [ `id -u` != 0 ]; then
-  if [ -t 0 ]; then
+#  if [ -t 0 ]; then
     exec sudo `realpath $0` "$@"
-  else
-    exec sakura -e sudo `realpath $0` --no-interaction "$@"
-  fi
+#  else
+#    exec sakura -e sudo `realpath $0` --no-interaction "$@"
+#  fi
 fi
 
 set -e
@@ -24,7 +24,7 @@ if echo -- "$@" | grep -q " --no-interaction"; then
   exit 0
 fi
 
-TMP_XAUTH=`mktemp`
+TMP_XAUTH=`mktemp /tmp/.docker-firefox-XXXX`
 xauth nlist :0 | sed -e 's/^..../ffff/' | xauth -f $TMP_XAUTH nmerge -
 chown -R $SUDO_UID:$SUDO_GID $TMP_XAUTH
 mkdir -p /tmp/firefox || true
