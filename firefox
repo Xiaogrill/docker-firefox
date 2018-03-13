@@ -33,5 +33,6 @@ docker run --cap-drop=all --rm --shm-size 2g -e DISPLAY=$DISPLAY \
     -v /tmp/firefox:/home/user/Downloads/ \
     -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
     -v $TMP_XAUTH:/home/user/.Xauthority:ro \
+    --net=host \
     firefox
 rm -rf $TMP_XAUTH
